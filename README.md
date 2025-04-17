@@ -37,6 +37,34 @@ Configuration was done by aws EKS
 ![alt text](images/image.png)
 
 # Architecture
+```mermaid
+graph TB
+  subgraph AWS Cloud
+    direction TB
+    EKS[EKS Cluster]
+    ELB[AWS ELB]
+  end
+
+  subgraph Kubernetes Cluster within EKS
+    direction LR
+    HelmNFS[NFS Provisioner]
+    PVC[nfs-pvc PVC]
+    Job[copy-content-job]
+    Deployment[web-server Deployment Nginx]
+    Service[web-server-service LB]
+  end
+
+  EKS -->|hosts| HelmNFS
+  HelmNFS -->|provisions| PVC
+  PVC --> Job
+  Job -->|writes HTML| PVC
+  PVC --> Deployment
+  Deployment -->|serves content| Service
+  Service -->|provisions| ELB
+  ELB -->|external user traffic| User[Internet User]
+
+```
+
 - The NFS Server provides shared storage across the cluster.
 - The NFS Provisioner dynamically creates PVs bound to PVCs using a StorageClass.
 - A PVC connects both the Nginx Deployment and the Job and they can share files.
