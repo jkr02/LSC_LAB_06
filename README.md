@@ -35,3 +35,12 @@ Configuration was done by aws EKS
 - kubectl get svc web-server-service
 
 ![alt text](images/image.png)
+
+# Architecture
+- The NFS Server provides shared storage across the cluster.
+- The NFS Provisioner dynamically creates PVs bound to PVCs using a StorageClass.
+- A PVC connects both the Nginx Deployment and the Job and they can share files.
+- The Job writes web content to the shared volume.
+- The Nginx HTTP Server serves content.
+- A Service exposes the Nginx pods and users can access the website.
+
